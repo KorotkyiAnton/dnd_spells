@@ -14,7 +14,7 @@ async def import_spells_if_empty():
 
         print("[import] БД порожня, починаємо імпорт...")
 
-        json_path = os.path.join(os.path.dirname(__file__), "../data/spells_ua.json")
+        json_path = os.path.join(os.path.dirname(__file__), "../spells_ua.json")
         with open(json_path, encoding="utf-8") as f:
             spells = json.load(f)
 
