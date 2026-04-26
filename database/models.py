@@ -1,9 +1,9 @@
-from sqlalchemy import DateTime, String, Text, ForeignKey, Integer, Table, Column, func, quoted_name
+from sqlalchemy import DateTime, String, Text, ForeignKey, Integer, Table, Column, func, quoted_name, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
-    date_create: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
+    date_create: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
     date_update: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
 
