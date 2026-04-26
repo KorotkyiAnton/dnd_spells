@@ -8,6 +8,7 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 from aiohttp import web
 from dotenv import load_dotenv
 
+from scripts.import_spells import import_spells_if_empty
 from common.bot_commands_list import private_commands, group_commands
 from database.engine import session_maker, create_db
 from handlers.common import common_router
@@ -37,6 +38,7 @@ dp.include_router(unknown_router)
 
 async def on_startup() -> None:
     await create_db()
+    await import_spells_if_empty()
     await bot.set_webhook(f"{WEBHOOK_HOST}{WEBHOOK_PATH}")
     await bot.set_my_commands(commands=private_commands, scope=BotCommandScopeAllPrivateChats())
     await bot.set_my_commands(commands=group_commands, scope=BotCommandScopeAllGroupChats())
