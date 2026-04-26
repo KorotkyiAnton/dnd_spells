@@ -1,0 +1,11 @@
+{
+  "start": "👋 Привіт! Введи назву закляття для пошуку (UA або EN):",
+  "search_prompt": "🔍 Введи назву закляття (UA або EN):",
+  "no_results": "😔 Заклять не знайдено за запитом «{query}»",
+  "results_header": "✨ Знайдено {count} заклять:",
+  "spell_not_found": "❌ Заклинання не знайдено",
+  "group_usage": "Використовуй /spell [назва] для пошуку",
+  "start_command": "Для пошуку заклять напишіть частину назви українською або англійською",
+  "unknown_message": "🤔 Спробуй /start або введи назву закляття",
+  "spell_card": "✨ <b>{name_ua}</b>{name_en_part}\n─────────────────\n🎯 <b>Рівень:</b> {level}\n⏱ <b>Час накладання:</b> {casting_time}\n⌛ <b>Тривалість:</b> {duration}\n📏 <b>Дистанція:</b> {spell_range}\n🔮 <b>Компоненти:</b> {components}\n🧙 <b>Класи:</b> {classes}\n📖 <b>Джерело:</b> {source}\n─────────────────\n<b>Опис:</b> {description}"
+}
