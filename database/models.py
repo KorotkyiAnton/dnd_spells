@@ -4,7 +4,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 class Base(DeclarativeBase):
     date_create: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
-    date_update: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    date_update = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
 
 spell_classes = Table(
