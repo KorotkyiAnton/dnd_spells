@@ -26,9 +26,8 @@ def new_search_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def spell_detail_kb(spells: list) -> InlineKeyboardMarkup:
+def spell_detail_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    _add_spell_buttons(builder, spells)
     builder.button(text="↩ До результатів", callback_data="back_to_results")
     builder.button(text="🔍 Новий пошук", callback_data="new_search")
     builder.adjust(1)

@@ -139,7 +139,7 @@ async def handle_spell_detail(callback: types.CallbackQuery, state: FSMContext,
     spells_data = state_data.get("spells", [])
 
     text = format_spell_card(spell, messages["spell_card"])
-    kb = spell_detail_kb(spells_data) if spells_data else None
+    kb = spell_detail_kb() if spells_data else None
 
     try:
         await callback.message.edit_text(text, reply_markup=kb)
