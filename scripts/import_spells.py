@@ -3,6 +3,11 @@ import os
 from sqlalchemy import text
 from database.engine import session_maker
 
+
+def _clip(val, max_len):
+    return (val or "")[:max_len]
+
+
 async def import_spells_if_empty():
     async with session_maker() as session:
         print("[import] Очищення таблиць...")
@@ -22,16 +27,16 @@ async def import_spells_if_empty():
                 VALUES (:name_ua, :name_en, :level, :casting_time, :duration, :range, :components, :source, :description, :url)
                 RETURNING id
             """), {
-                "name_ua":      spell.get("name_ua", ""),
-                "name_en":      spell.get("name_en", ""),
-                "level":        spell.get("level", ""),
-                "casting_time": spell.get("casting_time", ""),
-                "duration":     spell.get("duration", ""),
-                "range":        spell.get("range", ""),
-                "components":   spell.get("components", ""),
-                "source":       spell.get("source", ""),
-                "description":  spell.get("description", ""),
-                "url":          spell.get("url", ""),
+                "name_ua":      _clip(spell.get("name_ua"), 255),
+                "name_en":      _clip(spell.get("name_en"), 255),
+                "level":        _clip(spell.get("level"), 100),
+                "casting_time": _clip(spell.get("casting_time"), 100),
+                "duration":     _clip(spell.get("duration"), 100),
+                "range":        _clip(spell.get("range"), 100),
+                "components":   _clip(spell.get("components"), 100),
+                "source":       _clip(spell.get("source"), 255),
+                "description":  spell.get("description") or "",
+                "url":          _clip(spell.get("url"), 512),
             })
             spell_id = result.scalar()
 
