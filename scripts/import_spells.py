@@ -5,24 +5,22 @@ from database.engine import session_maker
 
 async def import_spells_if_empty():
     async with session_maker() as session:
-        result = await session.execute(text("SELECT COUNT(*) FROM spells"))
-        count = result.scalar()
+        print("[import] Очищення таблиць...")
+        await session.execute(text(
+            "TRUNCATE TABLE spell_classes, spells, classes RESTART IDENTITY CASCADE"
+        ))
 
-        if count > 0:
-            print(f"[import] БД вже містить {count} заклять, пропускаємо імпорт")
-            return
-
-        print("[import] БД порожня, починаємо імпорт...")
+        print("[import] Починаємо імпорт...")
 
         json_path = os.path.join(os.path.dirname(__file__), "../spells_ua.json")
         with open(json_path, encoding="utf-8") as f:
             spells = json.load(f)
 
         for spell in spells:
-            await session.execute(text("""
+            result = await session.execute(text("""
                 INSERT INTO spells (name_ua, name_en, level, casting_time, duration, "range", components, source, description, url)
                 VALUES (:name_ua, :name_en, :level, :casting_time, :duration, :range, :components, :source, :description, :url)
-                ON CONFLICT DO NOTHING
+                RETURNING id
             """), {
                 "name_ua":      spell.get("name_ua", ""),
                 "name_en":      spell.get("name_en", ""),
@@ -35,6 +33,21 @@ async def import_spells_if_empty():
                 "description":  spell.get("description", ""),
                 "url":          spell.get("url", ""),
             })
+            spell_id = result.scalar()
+
+            class_names = [c.strip() for c in spell.get("classes", "").split(",") if c.strip()]
+            for class_name in class_names:
+                cls_result = await session.execute(text("""
+                    INSERT INTO classes (name) VALUES (:name)
+                    ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+                    RETURNING id
+                """), {"name": class_name})
+                class_id = cls_result.scalar()
+
+                await session.execute(text("""
+                    INSERT INTO spell_classes (spell_id, class_id) VALUES (:spell_id, :class_id)
+                    ON CONFLICT DO NOTHING
+                """), {"spell_id": spell_id, "class_id": class_id})
 
         await session.commit()
         print(f"[import] Імпортовано {len(spells)} заклять")
