@@ -12,22 +12,27 @@ def _pg_escape(s: str) -> str:
 
 async def search_spells(session: AsyncSession, query: str) -> list[Spell]:
     q = query.strip()
+    starts = f"{q}%"
     partial = f"%{q}%"
     word_re = f"\\y{_pg_escape(q)}\\y"
 
     priority = case(
         (Spell.name_ua.ilike(q), 1),
         (Spell.name_en.ilike(q), 2),
-        (Spell.name_ua.ilike(partial), 3),
-        (Spell.name_en.ilike(partial), 4),
-        (Spell.description.op("~*")(word_re), 5),
-        (Spell.description.ilike(partial), 6),
+        (Spell.name_ua.ilike(starts), 3),
+        (Spell.name_en.ilike(starts), 4),
+        (Spell.name_ua.ilike(partial), 5),
+        (Spell.name_en.ilike(partial), 6),
+        (Spell.description.op("~*")(word_re), 7),
+        (Spell.description.ilike(partial), 8),
         else_=99,
     )
 
     stmt = (
         select(Spell)
         .where(or_(
+            Spell.name_ua.ilike(starts),
+            Spell.name_en.ilike(starts),
             Spell.name_ua.ilike(q),
             Spell.name_en.ilike(q),
             Spell.name_ua.ilike(partial),
